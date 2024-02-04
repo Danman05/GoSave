@@ -1,25 +1,37 @@
-﻿namespace GoSave.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GoSave.Models
 {
     public class Vault
     {
+        private static int _seedId = 50;
         public int Id { get; set; }
+        public int OwnerId { get; set; }
         public string Name { get; set; }
-        public User Owner { get; set; }
-        public double Goal { get; set; }
 
-        public double currentCapicity { get; set; }
-        public double PercentToTarget { get => calcPercentTarget(); }
+        [Required(ErrorMessage = "Goal field is required")]
+        public double? Goal { get; set; }
 
-        public Vault(int id, string name, User user, double goal)
+        public double currentCapacity { get; set; }
+        public double PercentToTarget { get => CalcPercentTarget(); }
+
+        public Vault(string name, int ownerId, double? goal)
         {
-            this.Id = id;
+            this.Id = _seedId;
             this.Name = name;
-            this.Owner = user;
+            this.OwnerId = ownerId;
             this.Goal = goal;
         }
-        private double calcPercentTarget()
+        private double CalcPercentTarget()
         {
-            return (double)currentCapicity / (double)Goal;
+            if (currentCapacity <= 0)
+                return 0;
+            return (double)currentCapacity / (double)Goal * 100;
+        }
+
+        public static void IncrementSeedId()
+        {
+            _seedId++;
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using GoSave.Models;
+﻿using GoSave.Data;
+using GoSave.Models;
 
 namespace GoSave.Repositories
 {
@@ -8,33 +9,36 @@ namespace GoSave.Repositories
     /// </summary>
     public class VaultRepo
     {
-        private UserRepo _userRepo;
-
-        private static List<Vault> _vaults = new List<Vault> { };
-
-
-        public VaultRepo()
-        {
-            _userRepo = new UserRepo();
-            _vaults = new List<Vault>()
-            {
-                new Vault(id: 1, name: "Vault", user: _userRepo.FindUser(1), 12500.5),
-                new Vault(id: 2, name: "Vault", user: _userRepo.FindUser(2), 1000.75)
-
-            };
-        }
+        private VaultData _vaultData = new VaultData();
 
         /// <summary>
-        /// Add to specific vault
+        /// Updates currentCapacity
         /// </summary>
         /// <param name="id">vault id</param>
         /// <param name="amount">Amount to be added</param>
         /// <param name="user">User performing action</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Vault AddToVault(int id, double amount, User user)
-        {            
-            throw new NotImplementedException();
+        public void AddToVault(int id, double amount)
+        {
+            GetVault(id).currentCapacity += amount;
+
+            //throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vault"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void AddVault(Vault vault)
+        {   
+            
+            // Null checks
+            if (string.IsNullOrEmpty(vault.Name) || vault.Goal < 0)
+                throw new ArgumentNullException("Vault could not be created, check username & goal ");
+
+            _vaultData.VaultToList(vault);
         }
 
         /// <summary>
@@ -42,47 +46,31 @@ namespace GoSave.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Vault object</returns>
-        /// <exception cref="IndexOutOfRangeException"></exception>
-        /// <exception cref="NotImplementedException"></exception>
-        public Vault? GetVault(int id) 
+        /// <exception cref="ArgumentNullException"></exception>
+        public Vault GetVault(int id)
         {
-            try
-
-            {
-                Vault vault = _vaults.Find(x => x.Id == id);
-
-                if (vault == null) { throw new ArgumentNullException(); }
-                
-                return vault;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return null;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-            catch(Exception) {return null; }
+            return _vaultData.ExistingVault(id) ?? throw new ArgumentNullException("Vault not found");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <returns>List of Vault objects</returns>
+        /// <returns>List of Vault</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public ICollection<Vault> GetVaults() 
+        public ICollection<Vault> GetVaults(int userId)
         {
-            return _vaults;
+            return _vaultData.Vaults.Where(vaultOwner => vaultOwner.OwnerId == userId).ToList();
         }
-
+         
         /// <summary>
-        /// 
+        /// Delete a vault
+        /// Admins can delete any vault
+        /// Users can delete their own vaults
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Vault Id</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public bool DeleteVault(int id) 
+        public bool DeleteVault(int id)
         {
             throw new NotImplementedException();
         }
