@@ -87,6 +87,7 @@ namespace GoSave.Controllers
             int userId = GetUserIdFromClaim();
             if (userId < 0)
             {
+                _logger.LogError("Error getting userId from claim");
                 return StatusCode(500, "Error getting details, try logging back into your account" +
                     "if the issue persists contact support >:)");
             }
@@ -110,8 +111,11 @@ namespace GoSave.Controllers
             {
                 vault.OwnerId = GetUserIdFromClaim();
                 if (vault.OwnerId < 0)
+                {
+                    _logger.LogError("Error getting userId from claim");
                     return StatusCode(500, "Error getting details, try logging back into your account" +
-                    "if the issue persists contact support >:)");
+                        "if the issue persists contact support >:)");
+                }
 
                 _vaultRepo.AddVault(vault);
                 _logger.LogInformation("Vault has been created with Id: {vaultId}", vault.Id);
@@ -121,7 +125,7 @@ namespace GoSave.Controllers
             catch (ArgumentNullException)
             {
                 _logger.LogError("Failed to create vault reason: Empty field for name or empty goal");
-                return BadRequest("Vault needs an valid name & goal");
+                return BadRequest("Vault needs a valid name & goal");
             }
         }
 
