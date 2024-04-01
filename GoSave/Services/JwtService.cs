@@ -43,7 +43,7 @@ namespace GoSave.Services
             var token = new JwtSecurityToken(_JwtIssuer,
               _JwtAudience,
               claims,
-              expires: DateTime.Now.AddMinutes(30),
+              expires: DateTime.Now.AddHours(12),
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

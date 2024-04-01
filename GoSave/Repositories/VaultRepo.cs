@@ -11,6 +11,48 @@ namespace GoSave.Repositories
     {
         private VaultData _vaultData = new VaultData();
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vault"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void AddVault(Vault vault)
+        {
+
+            // Valid checks
+            if (string.IsNullOrEmpty(vault.Name))
+                throw new ArgumentNullException("Vault needs a name");
+            else if (vault.Goal < 0)
+                throw new ArgumentNullException("Vault needs a goal");
+
+            _vaultData.VaultToList(vault);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Vault object</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public Vault GetVault(int id)
+        {
+            return _vaultData.ExistingVault(id) ?? throw new ArgumentNullException("Vault not found");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>List of Vault</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public ICollection<Vault> GetVaults(int userId)
+        {
+            return _vaultData.Vaults.Where(vaultOwner => vaultOwner.OwnerId == userId).ToList();
+        }
+
+
         /// <summary>
         /// Updates currentCapacity
         /// </summary>
@@ -25,43 +67,8 @@ namespace GoSave.Repositories
 
             //throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vault"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public void AddVault(Vault vault)
-        {   
-            
-            // Null checks
-            if (string.IsNullOrEmpty(vault.Name) || vault.Goal < 0)
-                throw new ArgumentNullException("Vault could not be created, check username & goal ");
-
-            _vaultData.VaultToList(vault);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Vault object</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public Vault GetVault(int id)
-        {
-            return _vaultData.ExistingVault(id) ?? throw new ArgumentNullException("Vault not found");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>List of Vault</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public ICollection<Vault> GetVaults(int userId)
-        {
-            return _vaultData.Vaults.Where(vaultOwner => vaultOwner.OwnerId == userId).ToList();
-        }
          
+
         /// <summary>
         /// Delete a vault
         /// Admins can delete any vault
@@ -72,6 +79,8 @@ namespace GoSave.Repositories
         /// <exception cref="NotImplementedException"></exception>
         public bool DeleteVault(int id)
         {
+            //Vault? vault = _vaultData.Vaults.FirstOrDefault(x => x.Id == id);
+            //_vaultData.Vaults.Remove(vault);
             throw new NotImplementedException();
         }
     }
