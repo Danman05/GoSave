@@ -23,7 +23,7 @@ namespace GoSave.Repositories
             // Valid checks
             if (string.IsNullOrEmpty(vault.Name))
                 throw new ArgumentNullException("Vault needs a name");
-            else if (vault.Goal < 0)
+            else if (vault.Goal <= 0)
                 throw new ArgumentNullException("Vault needs a goal");
 
             _vaultData.VaultToList(vault);
@@ -64,8 +64,6 @@ namespace GoSave.Repositories
         public void AddToVault(int id, double amount)
         {
             GetVault(id).currentCapacity += amount;
-
-            //throw new NotImplementedException();
         }
          
 
@@ -79,8 +77,6 @@ namespace GoSave.Repositories
         /// <exception cref="NotImplementedException"></exception>
         public bool DeleteVault(int id)
         {
-            //Vault? vault = _vaultData.Vaults.FirstOrDefault(x => x.Id == id);
-            //_vaultData.Vaults.Remove(vault);
             throw new NotImplementedException();
         }
     }

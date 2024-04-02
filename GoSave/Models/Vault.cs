@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GoSave.Models
 {
     public class Vault
     {
         private static int _seedId = 50;
-        public int Id { get; set; }
+        public int Id { get; private set; }
+
+        [JsonIgnore]
         public int OwnerId { get; set; }
         public string Name { get; set; }
 

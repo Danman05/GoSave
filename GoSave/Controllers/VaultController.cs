@@ -122,10 +122,10 @@ namespace GoSave.Controllers
 
                 return Ok(new { message = "Vault created", createdVault = vault });
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
                 _logger.LogError("Failed to create vault reason: Empty field for name or empty goal");
-                return BadRequest("Vault needs a valid name & goal");
+                return BadRequest(ex.Message);
             }
         }
 
