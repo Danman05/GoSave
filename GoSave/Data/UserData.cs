@@ -22,7 +22,6 @@ namespace GoSave.Data
         /// <returns></returns>
         public void UserToList(User user)
         {
-                User.IncrementSeedId();
                 _users.Add(user);
         }
 

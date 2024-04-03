@@ -13,5 +13,6 @@ namespace GoSave.Context
         public DbSet<User> Users { get; set; }
         public DbSet<Identity> Identity { get; set; }
         public DbSet<Address> Address { get; set; }
+        public DbSet<Vault> Vaults { get; set; }
     }
 }

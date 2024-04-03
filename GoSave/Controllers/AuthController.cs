@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using GoSave.Models;
 using GoSave.Repositories;
 using GoSave.Services;
+using GoSave.Context;
+using System.Security.Principal;
+using HackGame.Api;
 
 namespace GoSave.Controllers
 {
@@ -12,27 +15,55 @@ namespace GoSave.Controllers
     {
         private readonly JwtService _jwtService;
         UserRepo _userRepo = new UserRepo();
+        GoSaveDbContext _db;
 
-        public AuthController(JwtService jwtService)
+        public AuthController(JwtService jwtService, GoSaveDbContext db)
         {
             _jwtService = jwtService;
+            this._db = db;
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Login([FromBody] Identity identity)
+        [HttpPut("Login")]
+        public IActionResult Login(string username, string password)
         {
             try
             {
-               if (string.IsNullOrEmpty(identity.Username) || string.IsNullOrEmpty(identity.Password))
-                    return BadRequest("Username or password is not valid");
+                var user = this._db.Identity.Where(i => i.Username == username.ToLower()).FirstOrDefault();
+                if (user == null)
+                {
+                    return NotFound("username or password was íncorrect");
+                }
 
-                User loginResult = _userRepo.VerifyLogin(identity);
+                if (user.Password == PasswordHasher.HashPassword(password))
+                {
+                    return Ok();
+                }
 
-                if (loginResult == null) { return Unauthorized(); }
+                return Unauthorized("username or password was íncorrect");
+            }
+            catch (Exception)
+            {
+                return BadRequest("Failed login - try again");
+            }
+        }
 
-                string token = _jwtService.GenerateJSONWebToken(loginResult);
-                return Ok(token);
+        [AllowAnonymous]
+        [HttpPut("SignIn")]
+        public async Task<IActionResult> Signup(string Username, string Password, string Email, string Firstname, string Lastname, string Street, string City, string Postalcode, string Country)
+        {
+            try
+            {
+                Username = Username.ToLower();
+                var user = this._db.Identity.Where(i => i.Username == Username.ToLower()).FirstOrDefault();
+                if (user != null)
+                {
+                    return BadRequest("username already taken");
+                }
+
+                
+
+                return Unauthorized("username or password was íncorrect");
             }
             catch (Exception)
             {
