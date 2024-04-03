@@ -52,14 +52,14 @@ namespace GoSave.Controllers
         {
             try
             {
-                int userId = GetUserIdFromClaim();
-                if (userId < 0)
+                Guid userId = GetUserIdFromClaim();
+                if (userId == Guid.Empty)
                 {
                     return StatusCode(500, "Error getting details, try logging back into your account" +
                         "if the issue persists contact support >:)");
                 }
 
-                Vault vault = _vaultRepo.GetVault(id);
+                Vault vault = new Vault("", Guid.Empty, 0);
 
                 if (vault == null)
                     return NotFound("Vault not found");
@@ -76,28 +76,28 @@ namespace GoSave.Controllers
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>All owned vaults</returns>
-        [HttpGet]
-        [Route("[action]")]
-        public IActionResult All()
-        {
-            int userId = GetUserIdFromClaim();
-            if (userId < 0)
-            {
-                _logger.LogError("Error getting userId from claim");
-                return StatusCode(500, "Error getting details, try logging back into your account" +
-                    "if the issue persists contact support >:)");
-            }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <returns>All owned vaults</returns>
+        //[HttpGet]
+        //[Route("[action]")]
+        //public IActionResult All()
+        //{
+        //    int userId = GetUserIdFromClaim();
+        //    if (userId < 0)
+        //    {
+        //        _logger.LogError("Error getting userId from claim");
+        //        return StatusCode(500, "Error getting details, try logging back into your account" +
+        //            "if the issue persists contact support >:)");
+        //    }
 
-            return Ok(new
-            {
-                message = $"Hello {User?.Identity?.Name} Here is a list of your owned vaults",
-                ownedVaults = _vaultRepo.GetVaults(userId)
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        message = $"Hello {User?.Identity?.Name} Here is a list of your owned vaults",
+        //        ownedVaults = _vaultRepo.GetVaults(userId)
+        //    });
+        //}
         /// <summary>
         /// Creates a vault
         /// </summary>
@@ -110,12 +110,12 @@ namespace GoSave.Controllers
             try
             {
                 vault.OwnerId = GetUserIdFromClaim();
-                if (vault.OwnerId < 0)
-                {
-                    _logger.LogError("Error getting userId from claim");
-                    return StatusCode(500, "Error getting details, try logging back into your account" +
-                        "if the issue persists contact support >:)");
-                }
+                //if (vault.OwnerId < 0)
+                //{
+                //    _logger.LogError("Error getting userId from claim");
+                //    return StatusCode(500, "Error getting details, try logging back into your account" +
+                //        "if the issue persists contact support >:)");
+                //}
 
                 _vaultRepo.AddVault(vault);
                 _logger.LogInformation("Vault has been created with Id: {vaultId}", vault.Id);
@@ -133,17 +133,17 @@ namespace GoSave.Controllers
         /// 
         /// </summary>
         /// <returns>UserId contained from claim</returns>
-        private int GetUserIdFromClaim()
+        private Guid GetUserIdFromClaim()
         {
             try
             {
                 Claim claim = ((ClaimsIdentity)User.Identity).FindFirst("userId");
-                int userId = Int32.Parse(claim.Value);
+                Guid userId = Guid.Parse(claim.Value);
                 return userId;
             }
-            catch (ArgumentNullException) { return -1; }
-            catch (FormatException) { return -1; }
-            catch (OverflowException) { return -1; }
+            catch (ArgumentNullException) { return Guid.Empty; }
+            catch (FormatException) { return Guid.Empty; }
+            catch (OverflowException) { return Guid.Empty; }
         }
     }
 }

@@ -2,14 +2,20 @@
 {
     public class User
     {
-        private static int _seedId = 100;
+        public User()
+        {
+            
+        }
 
-        public int Id { get; private set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public Address Address { get; set; }
+        private static Guid _seedId = Guid.Empty;
 
-        public Identity Identity { get; set; }
+        public Guid? Id { get; private set; }
+
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public Address? Address { get; set; }
+
+        public Identity? Identity { get; set; }
 
 
         public User(string firstName, string lastName, Address address, Identity identity)
@@ -24,7 +30,7 @@
 
         public static void IncrementSeedId()
         {
-            _seedId++;
+            //_seedId++;
         }
 
     }

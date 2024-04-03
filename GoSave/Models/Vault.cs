@@ -5,20 +5,21 @@ namespace GoSave.Models
 {
     public class Vault
     {
-        private static int _seedId = 50;
-        public int Id { get; private set; }
+        [JsonIgnore]
+        private static Guid _seedId = Guid.Empty;
+        public Guid? Id { get; private set; }
 
         [JsonIgnore]
-        public int OwnerId { get; set; }
-        public string Name { get; set; }
+        public Guid OwnerId { get; set; }
+        public string? Name { get; set; }
 
         [Required(ErrorMessage = "Goal field is required")]
         public double? Goal { get; set; }
 
-        public double currentCapacity { get; set; }
-        public double PercentToTarget { get => CalcPercentTarget(); }
+        public double? currentCapacity { get; set; }
+        public double? PercentToTarget { get => CalcPercentTarget(); }
 
-        public Vault(string name, int ownerId, double? goal)
+        public Vault(string name, Guid ownerId, double? goal)
         {
             this.Id = _seedId;
             this.Name = name;
@@ -30,11 +31,6 @@ namespace GoSave.Models
             if (currentCapacity <= 0)
                 return 0;
             return (double)currentCapacity / (double)Goal * 100;
-        }
-
-        public static void IncrementSeedId()
-        {
-            _seedId++;
         }
 
     }

@@ -30,41 +30,41 @@ namespace GoSave.Repositories
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Vault object</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public Vault GetVault(int id)
-        {
-            return _vaultData.ExistingVault(id) ?? throw new ArgumentNullException("Vault not found");
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns>Vault object</returns>
+        ///// <exception cref="ArgumentNullException"></exception>
+        //public Vault GetVault(int id)
+        //{
+        //    return _vaultData.ExistingVault(id) ?? throw new ArgumentNullException("Vault not found");
+        //}
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>List of Vault</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public ICollection<Vault> GetVaults(int userId)
-        {
-            return _vaultData.Vaults.Where(vaultOwner => vaultOwner.OwnerId == userId).ToList();
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <returns>List of Vault</returns>
+        ///// <exception cref="NotImplementedException"></exception>
+        //public ICollection<Vault> GetVaults(Guid userId)
+        //{
+        //    return _vaultData.Vaults.Where(va == vaultOwner.OwnerId == userId).ToList();
+        //}
 
 
-        /// <summary>
-        /// Updates currentCapacity
-        /// </summary>
-        /// <param name="id">vault id</param>
-        /// <param name="amount">Amount to be added</param>
-        /// <param name="user">User performing action</param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public void AddToVault(int id, double amount)
-        {
-            GetVault(id).currentCapacity += amount;
-        }
+        ///// <summary>
+        ///// Updates currentCapacity
+        ///// </summary>
+        ///// <param name="id">vault id</param>
+        ///// <param name="amount">Amount to be added</param>
+        ///// <param name="user">User performing action</param>
+        ///// <returns></returns>
+        ///// <exception cref="NotImplementedException"></exception>
+        //public void AddToVault(int id, double amount)
+        //{
+        //    GetVault(id).currentCapacity += amount;
+        //}
          
 
         /// <summary>

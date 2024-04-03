@@ -8,7 +8,7 @@ namespace GoSave.Data
 
         private static List<Vault> _vaults = new List<Vault>()
         {
-            new Vault(name: "Vault", ownerId: 100, 12500),
+            new Vault(name: "Vault", ownerId: Guid.NewGuid(), 12500),
         };
 
         public ICollection<Vault> Vaults { get { return _vaults; } }
@@ -21,7 +21,6 @@ namespace GoSave.Data
         /// <returns></returns>
         public void VaultToList(Vault vault)
         {
-            Vault.IncrementSeedId();
             _vaults.Add(vault);
         }
 
@@ -30,7 +29,7 @@ namespace GoSave.Data
         /// </summary>
         /// <param name="username">unique username</param>
         /// <returns>Account or Null</returns>
-        public Vault? ExistingVault(int id)
+        public Vault? ExistingVault(Guid id)
         {
             return _vaults.Find(v => v.Id == id);
         }

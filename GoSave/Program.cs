@@ -1,10 +1,13 @@
+using GoSave.Context;
 using GoSave.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text;
+
 namespace GoSave
 {
     public class Program
@@ -81,6 +84,9 @@ namespace GoSave
             builder.Services.AddSingleton<JwtService>();
 
             builder.Services.AddAuthentication();
+
+            builder.Services.AddDbContext<GoSaveDbContext>(options =>
+            options.UseMySql(builder.Configuration.GetConnectionString("Default"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default"))));
 
             var app = builder.Build();
 
