@@ -29,6 +29,7 @@ namespace GoSave.Controllers
         {
             try
             {
+                Console.WriteLine(username + ":" + password + "asdfhnofgjoasefadj");
                 var user = this._db.Identity.Where(i => i.Username == username.ToLower()).FirstOrDefault();
                 if (user == null)
                 {
@@ -54,16 +55,8 @@ namespace GoSave.Controllers
         {
             try
             {
-                Username = Username.ToLower();
-                var user = this._db.Identity.Where(i => i.Username == Username.ToLower()).FirstOrDefault();
-                if (user != null)
-                {
-                    return BadRequest("username already taken");
-                }
-
-                
-
-                return Unauthorized("username or password was íncorrect");
+                Console.WriteLine(Username);
+                return Unauthorized("fuck off");
             }
             catch (Exception)
             {
