@@ -17,7 +17,7 @@ namespace GoSave.Models
         public decimal? currentCapacity { get; set; }
         public double? PercentToTarget { get => CalcPercentTarget(); }
 
-        public Vault(string name, Guid ownerId, decimal? goal)
+        public Vault(string name, Guid ownerId, decimal goal)
         {
             this.Name = name;
             this.OwnerId = ownerId;
