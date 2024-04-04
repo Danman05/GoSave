@@ -1,8 +1,10 @@
-﻿using GoSave.Models;
+﻿using GoSave.Context;
+using GoSave.Models;
 using GoSave.Repositories;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity;
 using System.Security.Claims;
 
 namespace GoSave.Controllers
@@ -34,12 +36,27 @@ namespace GoSave.Controllers
     {
         ILogger<VaultController> _logger;
         VaultRepo _vaultRepo;
-        public VaultController(ILogger<VaultController> logger)
+        GoSaveDbContext _db;
+        public VaultController(ILogger<VaultController> logger, GoSaveDbContext db)
         {
             _vaultRepo = new VaultRepo();
             _logger = logger;
+            this._db = db;
         }
 
+        [Authorize]
+        [HttpGet("GetVaults")]
+        public async Task<IActionResult> GetVaults()
+        {
+            Guid userId = GetUserIdFromClaim();
+            if(userId == Guid.Empty)
+            {
+                return Unauthorized("not logged in");
+            }
+
+            var vaults = await this._db.Vaults.Where(i => i.OwnerId == userId).ToListAsync();
+            return Ok(vaults);
+        }
 
         /// <summary>
         /// Get one vault
@@ -76,28 +93,6 @@ namespace GoSave.Controllers
             }
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <returns>All owned vaults</returns>
-        //[HttpGet]
-        //[Route("[action]")]
-        //public IActionResult All()
-        //{
-        //    int userId = GetUserIdFromClaim();
-        //    if (userId < 0)
-        //    {
-        //        _logger.LogError("Error getting userId from claim");
-        //        return StatusCode(500, "Error getting details, try logging back into your account" +
-        //            "if the issue persists contact support >:)");
-        //    }
-
-        //    return Ok(new
-        //    {
-        //        message = $"Hello {User?.Identity?.Name} Here is a list of your owned vaults",
-        //        ownedVaults = _vaultRepo.GetVaults(userId)
-        //    });
-        //}
         /// <summary>
         /// Creates a vault
         /// </summary>
@@ -105,22 +100,16 @@ namespace GoSave.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
-        public IActionResult Create([FromBody] Vault vault)
+        public async Task<IActionResult> Create(string name, decimal amount, string base64image)
         {
             try
             {
-                vault.OwnerId = GetUserIdFromClaim();
-                //if (vault.OwnerId < 0)
-                //{
-                //    _logger.LogError("Error getting userId from claim");
-                //    return StatusCode(500, "Error getting details, try logging back into your account" +
-                //        "if the issue persists contact support >:)");
-                //}
-
-                _vaultRepo.AddVault(vault);
-                _logger.LogInformation("Vault has been created with Id: {vaultId}", vault.Id);
-
-                return Ok(new { message = "Vault created", createdVault = vault });
+                Vault newVault = new Vault(name, GetUserIdFromClaim(), amount);
+                VaultImage vaultImage = new VaultImage(newVault.Id, base64image);
+                await this._db.AddAsync(newVault);
+                await this._db.AddAsync(vaultImage);
+                await this._db.SaveChangesAsync();
+                return Ok(new { message = "Vault created", createdVault = newVault });
             }
             catch (ArgumentNullException ex)
             {
