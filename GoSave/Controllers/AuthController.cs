@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using GoSave.Models;
 using GoSave.Repositories;
 using GoSave.Services;
 using GoSave.Context;
-using System.Security.Principal;
 using HackGame.Api;
+using GoSave.Models;
 
 namespace GoSave.Controllers
 {
@@ -25,7 +24,7 @@ namespace GoSave.Controllers
 
         [AllowAnonymous]
         [HttpPut("Login")]
-        public IActionResult Login(string username, string password)
+        public async Task<IActionResult> Login(string username, string password)
         {
             try
             {
@@ -41,7 +40,7 @@ namespace GoSave.Controllers
                     return Ok();
                 }
 
-                return Unauthorized("username or password was íncorrect");
+                return NotFound("username or password was íncorrect");
             }
             catch (Exception)
             {
@@ -55,8 +54,18 @@ namespace GoSave.Controllers
         {
             try
             {
-                Console.WriteLine(Username);
-                return Unauthorized("fuck off");
+                if(_db.Identity.Where(i=>i.Username == Username.ToLower()).Any())
+                {
+                    return BadRequest("Username or email in use");
+                }
+
+                var identity = new Identity(Username.ToLower(), PasswordHasher.HashPassword(Password));
+                var address = new Address() { City = City, Id = Guid.NewGuid(), Country = Country, PostalCode = Postalcode, Street = Street };
+                var newUser = new User(Firstname, Lastname, address, identity);
+                await this._db.AddAsync(newUser);
+                await this._db.SaveChangesAsync();
+                return Ok(this._jwtService.GenerateJSONWebToken(newUser));
+                //send verification email
             }
             catch (Exception)
             {
