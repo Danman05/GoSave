@@ -44,6 +44,7 @@ namespace GoSave.Controllers
             this._db = db;
         }
 
+        //gets all vaults
         [Authorize]
         [HttpGet("GetVaults")]
         public async Task<IActionResult> GetVaults()
@@ -59,13 +60,13 @@ namespace GoSave.Controllers
         }
 
         /// <summary>
-        /// Get one vault
+        /// Gets info about a specific vault
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Object</returns>
         [HttpGet]
         [Route("[action]")]
-        public IActionResult One(int id)
+        public async Task<IActionResult> One(Guid vaultId)
         {
             try
             {
