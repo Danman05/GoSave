@@ -94,6 +94,31 @@ namespace GoSave.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetImage(Guid vaultId)
+        {
+            try
+            {
+                Guid userId = GetUserIdFromClaim();
+                var vault = await _db.Vaults.Where(i => i.Id == vaultId).FirstOrDefaultAsync();
+                if (vault.OwnerId != userId)
+                {
+                    return Unauthorized();
+                }
+                var vaultImage = await _db.VaultImages.Where(i=>i.VaultId == vault.Id).FirstOrDefaultAsync();
+                return Ok(vaultImage.Base64Image);
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound("Vault not found");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error occoured while getting vault");
+            }
+        }
+
         /// <summary>
         /// Creates a vault
         /// </summary>
