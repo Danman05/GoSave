@@ -10,7 +10,6 @@ namespace GoSave.Data
     {
         private static List<User> _users = new List<User>
         {
-            new User("Daniel", "S", new Address(), new Identity("DanielS", "1234")),
         };
 
         public ICollection<User> Users { get { return _users; } }
@@ -32,7 +31,7 @@ namespace GoSave.Data
         /// <returns>Account or Null</returns>
         public User? ExistingAccount(string username)
         {
-            return _users.Find(existingAccount => existingAccount.Identity.Username == username);
+            return null;
         }
     }
 

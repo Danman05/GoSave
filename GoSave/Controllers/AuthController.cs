@@ -5,6 +5,7 @@ using GoSave.Services;
 using GoSave.Context;
 using HackGame.Api;
 using GoSave.Models;
+using System.Data.Entity;
 
 namespace GoSave.Controllers
 {
@@ -29,15 +30,20 @@ namespace GoSave.Controllers
             try
             {
                 Console.WriteLine(username + ":" + password + "asdfhnofgjoasefadj");
-                var user = this._db.Identity.Where(i => i.Username == username.ToLower()).FirstOrDefault();
-                if (user == null)
+                var identity = this._db.Identity.Where(i => i.Username == username.ToLower()).FirstOrDefault();
+                if (identity == null)
                 {
                     return NotFound("username or password was íncorrect");
                 }
 
-                if (user.Password == PasswordHasher.HashPassword(password))
+                if (identity.Password == PasswordHasher.HashPassword(password))
                 {
-                    return Ok();
+                    var user = _db.Users.Where(i => i.IdentityId == identity.Id).FirstOrDefault();
+                    if(user == null)
+                    {
+                        return NotFound();
+                    }
+                    return Ok(_jwtService.GenerateJSONWebToken(identity));
                 }
 
                 return NotFound("username or password was íncorrect");
@@ -61,15 +67,16 @@ namespace GoSave.Controllers
 
                 var identity = new Identity(Username.ToLower(), PasswordHasher.HashPassword(Password));
                 var address = new Address() { City = City, Id = Guid.NewGuid(), Country = Country, PostalCode = Postalcode, Street = Street };
-                var newUser = new User(Firstname, Lastname, address, identity);
+                var newUser = new User(Firstname, Lastname, address, identity.Id);
+                await _db.AddAsync(identity);
                 await this._db.AddAsync(newUser);
                 await this._db.SaveChangesAsync();
-                return Ok(this._jwtService.GenerateJSONWebToken(newUser));
+                return Ok(this._jwtService.GenerateJSONWebToken(identity));
                 //send verification email
             }
             catch (Exception)
             {
-                return BadRequest("Failed login - try again");
+                return BadRequest("Failed login - try again");  
             }
         }
     }

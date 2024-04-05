@@ -16,6 +16,7 @@
 
         public Identity(string username, string password)
         {
+            this.Id = Guid.NewGuid();
             this.Username = username;
             this.Password = password;
         }

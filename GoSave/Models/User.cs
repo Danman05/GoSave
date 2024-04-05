@@ -4,23 +4,23 @@
     {
         public User(){}
 
-        public User(string firstName, string lastName, Address address, Identity identity)
+        public User(string firstName, string lastName, Address address, Guid identity)
         {
             this.Id = Guid.NewGuid();
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Address = address;
-            this.Identity = identity;
+            this.IdentityId = identity;
         }
 
 
-        public Guid? Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Address Address { get; set; }
 
         //foreign key reference
-        public Identity Identity { get; set; }
+        public Guid IdentityId { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace GoSave.Controllers
 {
@@ -60,7 +61,7 @@ namespace GoSave.Controllers
         }
 
         /// <summary>
-        /// Gets info about a specific vault
+        /// Gets info about a specific vaultf
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Object</returns>
@@ -101,12 +102,12 @@ namespace GoSave.Controllers
             try
             {
                 Guid userId = GetUserIdFromClaim();
-                var vault = await _db.Vaults.Where(i => i.Id == vaultId).FirstOrDefaultAsync();
+                var vault = _db.Vaults.Where(i => i.Id == vaultId).FirstOrDefault();
                 if (vault.OwnerId != userId)
                 {
                     return Unauthorized();
                 }
-                var vaultImage = await _db.VaultImages.Where(i=>i.VaultId == vault.Id).FirstOrDefaultAsync();
+                var vaultImage = _db.VaultImages.Where(i=>i.VaultId == vault.Id).FirstOrDefault();
                 return Ok(vaultImage.Base64Image);
             }
             catch (ArgumentNullException)
@@ -126,14 +127,23 @@ namespace GoSave.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Create(string name, decimal amount, string base64image)
+        public async Task<IActionResult> Create(string name, decimal amount, string? base64image)
         {
             try
             {
-                Vault newVault = new Vault(name, GetUserIdFromClaim(), amount);
-                VaultImage vaultImage = new VaultImage(newVault.Id, base64image);
+                var identityId = GetUserIdFromClaim();
+                var user = _db.Users.Where(i => i.IdentityId == identityId).FirstOrDefault();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                Vault newVault = new Vault(name, user.Id, amount);
                 await this._db.AddAsync(newVault);
-                await this._db.AddAsync(vaultImage);
+                if(base64image !=  null)
+                {
+                    VaultImage vaultImage = new VaultImage(newVault.Id, base64image);
+                    await this._db.AddAsync(vaultImage);
+                }
                 await this._db.SaveChangesAsync();
                 return Ok(new { message = "Vault created", createdVault = newVault });
             }

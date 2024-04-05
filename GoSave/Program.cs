@@ -81,6 +81,10 @@ namespace GoSave
                     ClockSkew = TimeSpan.Zero,
                 };
             });
+            builder.WebHost.ConfigureKestrel(options => {
+                options.Limits.MaxRequestLineSize = 1048576;
+            });
+
             builder.Services.AddSingleton<JwtService>();
 
             builder.Services.AddAuthentication();
