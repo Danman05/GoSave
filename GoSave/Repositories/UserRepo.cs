@@ -19,17 +19,7 @@ namespace GoSave.Repositories
         {
             try
             {
-                // Find account by username
-                User? foundAccount = _userData.ExistingAccount(identity.Username);
-
-                // Account exist check
-                if (foundAccount == null) { return null; }
-
-                // Private keys match check
-                if (foundAccount.Identity.Password != identity.Password) { return null; }
-
-                // Login verified
-                return foundAccount;
+                return null;
             }
             catch (Exception)
             {
@@ -39,16 +29,7 @@ namespace GoSave.Repositories
 
         public void AddUser(User user)
         {
-            // Null checks on Username & Password
-            // Required because it's part of the authentication
-            if (string.IsNullOrEmpty(user.Identity.Username) || string.IsNullOrEmpty(user.Identity.Password))
-                throw new ArgumentNullException("Username and password cannot be null");
-
-            // User already exists - username is unique
-            if (_userData.ExistingAccount(user.Identity.Username) != null)
-                throw new InvalidOperationException("Username not valid");
-
-            _userData.UserToList(user);
+            
         }
     }
 }

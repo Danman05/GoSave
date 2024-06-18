@@ -1,5 +1,4 @@
-﻿using GoSave.Data;
-using GoSave.Models;
+﻿using GoSave.Models;
 using GoSave.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

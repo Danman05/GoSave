@@ -2,30 +2,25 @@
 {
     public class User
     {
-        private static int _seedId = 100;
+        public User(){}
 
-        public int Id { get; private set; }
+        public User(string firstName, string lastName, Address address, Guid identity)
+        {
+            this.Id = Guid.NewGuid();
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.Address = address;
+            this.IdentityId = identity;
+        }
+
+
+        public Guid Id { get; private set; }
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Address Address { get; set; }
 
-        public Identity Identity { get; set; }
-
-
-        public User(string firstName, string lastName, Address address, Identity identity)
-        {
-            Id = _seedId;
-            FirstName = firstName;
-            LastName = lastName;
-            Address = address;
-            Identity = identity;
-
-        }
-
-        public static void IncrementSeedId()
-        {
-            _seedId++;
-        }
-
+        //foreign key reference
+        public Guid IdentityId { get; set; }
     }
 }

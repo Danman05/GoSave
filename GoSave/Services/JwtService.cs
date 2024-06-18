@@ -24,12 +24,12 @@ namespace GoSave.Services
         }
 
 
-        public string GenerateJSONWebToken(User user)
+        public string GenerateJSONWebToken(Identity user)
         {
             // Claims
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.Identity.Username),
+                new Claim(ClaimTypes.Name, user.Username),
                 
                 /*  Custom claim
                  *  userId, helps keep track for vault context

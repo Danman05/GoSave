@@ -5,11 +5,18 @@
     /// </summary>
     public class Identity
     {
+
+        public Identity()
+        {
+            
+        }
+        public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
 
         public Identity(string username, string password)
         {
+            this.Id = Guid.NewGuid();
             this.Username = username;
             this.Password = password;
         }
